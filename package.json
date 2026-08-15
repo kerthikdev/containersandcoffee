@@ -1,0 +1,20 @@
+{
+  "name": "containersandcoffee",
+  "version": "1.0.0",
+  "description": "Containers & Coffee - DevOps thoughts, brewed fresh daily",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve . -l 3000",
+    "start": "npx -y serve . -l 3000",
+    "serve": "npx -y serve . -l 3000"
+  },
+  "keywords": [
+    "blog",
+    "devops",
+    "docker",
+    "kubernetes",
+    "coffee"
+  ],
+  "author": "K. Arthi",
+  "license": "MIT"
+}

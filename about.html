@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="About the author behind Containers & Coffee — a DevOps engineer who writes about containers, cloud infrastructure, and the coffee that powers it all." />
+  <title>About — Containers &amp; Coffee</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <nav class="navbar scrolled" id="navbar" role="navigation" aria-label="Main navigation">
+      <div class="container navbar-inner">
+        <a href="index.html" class="nav-logo" aria-label="Containers and Coffee Home">
+          <span class="nav-logo-icon" aria-hidden="true">☕</span>
+          <div class="nav-logo-text">
+            <span>Containers &amp; Coffee</span>
+            <span>containersandcoffee.tech</span>
+          </div>
+        </a>
+
+        <div class="nav-links" role="list">
+          <a href="index.html" class="nav-link" role="listitem" id="nav-home">Home</a>
+          <a href="index.html#blog" class="nav-link" role="listitem" id="nav-blog">Blog</a>
+          <a href="about.html" class="nav-link active" role="listitem" id="nav-about">About</a>
+        </div>
+
+        <div class="nav-right">
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            aria-label="Toggle light/dark theme"
+            title="Toggle theme"
+          >☀️</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-content" role="main">
+
+    <!-- ABOUT HERO -->
+    <section class="about-hero" aria-labelledby="about-heading">
+      <div class="hero-bg" aria-hidden="true"
+        style="background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(198,134,66,0.08) 0%, transparent 60%), var(--bg);">
+      </div>
+      <div class="container" style="position:relative; z-index:1;">
+        <div class="about-avatar-large" aria-label="Author initials KA">KA</div>
+        <h1 class="about-hero-title" id="about-heading">Hi, I'm K. Arthi ☕</h1>
+        <p class="about-hero-sub">
+          DevOps engineer by day, coffee enthusiast by morning. I built this blog to
+          share what I've learned about containers, cloud infrastructure, and the art
+          of building reliable systems.
+        </p>
+        <div class="hero-cta-group">
+          <a href="index.html#blog" class="btn-primary" id="about-cta-blog">Read the Blog</a>
+          <a href="mailto:hello@containersandcoffee.tech" class="btn-outline" id="about-cta-email">Say Hello</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ABOUT CONTENT -->
+    <section class="about-section" aria-labelledby="story-heading">
+      <div class="container">
+        <div class="about-content">
+
+          <!-- Left: Prose -->
+          <div class="about-prose fade-in-up">
+            <h2 id="story-heading">The Story</h2>
+            <p>
+              I got into DevOps the same way most people do — I was a developer who got tired
+              of saying "it works on my machine" and decided to do something about it. That
+              was the beginning of a rabbit hole that led me through Dockerfiles, Helm charts,
+              Terraform modules, and three different Kubernetes clusters (two of which I
+              deliberately destroyed as learning exercises).
+            </p>
+            <p>
+              The coffee obsession started around the same time. There's something about the
+              precision required for a good espresso — the variables, the feedback loops,
+              the constant iteration — that resonates deeply with how I think about
+              infrastructure. Both reward patience, attention to detail, and a willingness
+              to throw out what isn't working and start again.
+            </p>
+            <p>
+              This blog is where I document what I learn. It's part technical reference for
+              my future self, part attempt to explain complex concepts in a way that actually
+              makes sense, and part love letter to the intersection of craft and technology.
+            </p>
+            <p>
+              If you're a DevOps engineer, a developer who wants to understand infrastructure
+              better, or just someone who appreciates a good cup of coffee and a clean
+              deployment pipeline — you're in the right place.
+            </p>
+          </div>
+
+          <!-- Right: Skills -->
+          <div class="fade-in-up" style="transition-delay: 0.15s;">
+            <h2 style="margin-bottom: var(--sp-6); font-size: 1.8rem;">What I Work With</h2>
+            <div class="skill-grid">
+              <div class="skill-card">
+                <div class="skill-icon">🐳</div>
+                <div class="skill-name">Docker</div>
+                <div class="skill-desc">Container builds, multi-stage, optimization</div>
+              </div>
+              <div class="skill-card">
+                <div class="skill-icon">⚙️</div>
+                <div class="skill-name">Kubernetes</div>
+                <div class="skill-desc">Deployments, HPA, Helm, GitOps</div>
+              </div>
+              <div class="skill-card">
+                <div class="skill-icon">🔁</div>
+                <div class="skill-name">CI/CD</div>
+                <div class="skill-desc">GitHub Actions, ArgoCD, pipelines</div>
+              </div>
+              <div class="skill-card">
+                <div class="skill-icon">☁️</div>
+                <div class="skill-name">Cloud</div>
+                <div class="skill-desc">AWS, GCP — compute, networking, storage</div>
+              </div>
+              <div class="skill-card">
+                <div class="skill-icon">🏗️</div>
+                <div class="skill-name">Terraform</div>
+                <div class="skill-desc">IaC, module design, state management</div>
+              </div>
+              <div class="skill-card">
+                <div class="skill-icon">☕</div>
+                <div class="skill-name">Coffee</div>
+                <div class="skill-desc">Pourover, AeroPress, espresso dialing</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- COFFEE PHILOSOPHY -->
+    <section class="about-section" aria-labelledby="philosophy-heading">
+      <div class="container-sm">
+        <div class="fade-in-up" style="text-align:center; margin-bottom: var(--sp-10);">
+          <p class="section-label">The Philosophy</p>
+          <h2 id="philosophy-heading" style="font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: var(--sp-6);">Why Containers &amp; Coffee?</h2>
+        </div>
+
+        <div class="fade-in-up" style="
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--r-xl);
+          padding: var(--sp-10);
+          position: relative;
+          overflow: hidden;
+        ">
+          <div style="
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--caramel), transparent);
+          "></div>
+
+          <div style="display: grid; gap: var(--sp-8);">
+            <div style="display: flex; gap: var(--sp-5); align-items: flex-start;">
+              <span style="font-size:1.8rem; flex-shrink:0;">🎯</span>
+              <div>
+                <h3 style="font-size:1.05rem; margin-bottom:var(--sp-2); color:var(--text-primary);">Precision matters in both</h3>
+                <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.7; margin:0;">A few degrees of water temperature changes a coffee's flavor profile entirely. A misconfigured resource limit can take down a production cluster. Both disciplines reward careful attention to detail.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: var(--sp-5); align-items: flex-start;">
+              <span style="font-size:1.8rem; flex-shrink:0;">🔄</span>
+              <div>
+                <h3 style="font-size:1.05rem; margin-bottom:var(--sp-2); color:var(--text-primary);">Iteration is the path to mastery</h3>
+                <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.7; margin:0;">Your first Dockerfile will be bloated. Your first espresso will be sour. Neither of these is failure — they're just pull requests that need another round of review.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: var(--sp-5); align-items: flex-start;">
+              <span style="font-size:1.8rem; flex-shrink:0;">🧘</span>
+              <div>
+                <h3 style="font-size:1.05rem; margin-bottom:var(--sp-2); color:var(--text-primary);">The ritual grounds the work</h3>
+                <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.7; margin:0;">Making coffee deliberately — measuring, timing, attending — is a form of mindfulness. It's the mental transition between "asleep" and "ready to debug a Kubernetes networking issue." Don't skip the ritual.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- CONNECT CTA -->
+    <section class="connect-section fade-in-up" aria-labelledby="connect-heading">
+      <div class="container">
+        <span style="font-size:2.5rem; display:block; margin-bottom:var(--sp-4);" aria-hidden="true">👋</span>
+        <h2 id="connect-heading" style="font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom:var(--sp-4);">Let's Connect</h2>
+        <p style="font-size:1rem; color:var(--text-secondary); max-width:480px; margin: 0 auto var(--sp-8); line-height:1.7;">
+          Whether you want to talk containers, debate pour-over vs espresso, or just say hi —
+          I'd love to hear from you.
+        </p>
+        <div class="hero-cta-group">
+          <a href="mailto:hello@containersandcoffee.tech" class="btn-primary" id="connect-email-btn">Send an Email</a>
+          <a href="https://github.com" class="btn-outline" id="connect-github-btn" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span style="font-size:1.8rem;" aria-hidden="true">☕</span>
+            <span class="footer-logo-text">Containers &amp; Coffee</span>
+          </div>
+          <p class="footer-tagline">
+            DevOps thoughts, brewed fresh daily.
+          </p>
+          <div class="footer-social">
+            <a href="https://github.com" class="social-link" aria-label="GitHub" target="_blank" rel="noopener" id="footer-github">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
+            </a>
+            <a href="https://twitter.com" class="social-link" aria-label="Twitter" target="_blank" rel="noopener" id="footer-twitter">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Explore</h3>
+          <ul class="footer-links">
+            <li><a href="index.html" class="footer-link" id="footer-nav-home">Home</a></li>
+            <li><a href="index.html#blog" class="footer-link" id="footer-nav-blog">Blog</a></li>
+            <li><a href="about.html" class="footer-link" id="footer-nav-about">About</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Categories</h3>
+          <ul class="footer-links">
+            <li><a href="index.html#blog" class="footer-link" id="footer-cat-docker">Docker</a></li>
+            <li><a href="index.html#blog" class="footer-link" id="footer-cat-k8s">Kubernetes</a></li>
+            <li><a href="index.html#blog" class="footer-link" id="footer-cat-devops">DevOps</a></li>
+            <li><a href="index.html#blog" class="footer-link" id="footer-cat-coffee">Coffee Life</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col-title">Contact</h3>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@containersandcoffee.tech" class="footer-link" id="footer-email">Email</a></li>
+            <li><a href="https://github.com" class="footer-link" id="footer-github-link" target="_blank" rel="noopener">GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 <span>Containers &amp; Coffee</span></p>
+        <p class="footer-copy">containersandcoffee.tech</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data/posts.js"></script>
+  <script>
+    // Navbar + theme for about page
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbar = document.querySelector('.navbar');
+      window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 30);
+      }, { passive: true });
+
+      const btn = document.getElementById('theme-toggle');
+      const saved = localStorage.getItem('cc-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+      btn?.addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        if (btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('cc-theme', next);
+      });
+
+      // Scroll animations
+      const obs = new IntersectionObserver(
+        entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }),
+        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      );
+      document.querySelectorAll('.fade-in-up').forEach(el => obs.observe(el));
+    });
+  </script>
+</body>
+</html>
