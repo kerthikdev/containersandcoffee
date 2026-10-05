@@ -29,6 +29,7 @@
         <div class="nav-links" role="list">
           <a href="index.html" class="nav-link active" role="listitem" id="nav-home">Home</a>
           <a href="#blog" class="nav-link" role="listitem" id="nav-blog">Blog</a>
+          <a href="roadmap.html" class="nav-link" role="listitem" id="nav-roadmaps">🗺️ Roadmaps</a>
           <a href="about.html" class="nav-link" role="listitem" id="nav-about">About</a>
         </div>
 
@@ -82,6 +83,9 @@
             <a href="#blog" class="btn-primary" id="hero-read-btn">
               <span>Read Latest Brews</span>
             </a>
+            <a href="roadmap.html" class="btn-primary" id="hero-roadmap-btn" style="background: linear-gradient(135deg, #10b981, #059669); border:none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+              <span>🗺️ Explore Roadmaps</span>
+            </a>
             <a href="about.html" class="btn-outline" id="hero-about-btn">
               <span>About the Author</span>
             </a>
@@ -90,6 +94,98 @@
           <!-- Featured Post Container -->
           <div id="featured-post"></div>
 
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- INTERACTIVE ROADMAPS SHOWCASE (roadmap.sh inspired) -->
+    <section class="roadmap-teaser-section" id="roadmaps-overview" aria-labelledby="roadmaps-overview-heading">
+      <div class="container">
+        <div class="roadmap-teaser-header">
+          <div>
+            <span class="rm-badge-pill">🗺️ Interactive Learning Flowcharts</span>
+            <h2 class="section-title" id="roadmaps-overview-heading" style="margin-top:0.4rem;">Engineering Career Roadmaps</h2>
+            <p style="color:var(--text-secondary); max-width:680px; font-size:0.95rem; line-height:1.6; margin-top:0.35rem;">
+              Inspired by <strong style="color:var(--text-primary);">roadmap.sh</strong> standards: Step-by-step flowchart spines, live interactive progress tracker (stored locally), core vs recommended knowledge, and copyable terminal commands.
+            </p>
+          </div>
+          <div>
+            <a href="roadmap.html" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+              <span>Open Roadmap Engine</span>
+              <span>➔</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="roadmap-teaser-grid">
+          <!-- Card 1: CCNA -->
+          <a href="roadmap.html?id=ccna" class="roadmap-card-preview" style="--card-accent: #3b82f6;">
+            <div>
+              <span class="rm-card-badge" style="--card-accent: #3b82f6;">🌐 Networking · 4 Milestones · 14 Topics</span>
+              <h3 class="rm-card-title">Cisco CCNA &amp; Enterprise Networking</h3>
+              <p class="rm-card-desc">
+                From binary VLSM calculation and OSI 7-layer encapsulation to 802.1Q campus VLANs, multi-area OSPF routing, ACL packet filtering, and NetDevOps automation.
+              </p>
+              <div class="rm-card-topics-list">
+                <span class="rm-card-topic-tag">VLSM / CIDR</span>
+                <span class="rm-card-topic-tag">802.1Q VLANs</span>
+                <span class="rm-card-topic-tag">OSPFv2 Dynamic</span>
+                <span class="rm-card-topic-tag">ACL Security</span>
+                <span class="rm-card-topic-tag">RESTCONF / YANG</span>
+              </div>
+            </div>
+            <div class="rm-card-footer" style="--card-accent: #3b82f6;">
+              <span>Launch CCNA Flowchart</span>
+              <span>➔</span>
+            </div>
+          </a>
+
+          <!-- Card 2: AWS Cloud -->
+          <a href="roadmap.html?id=cloud" class="roadmap-card-preview" style="--card-accent: #f59e0b;">
+            <div>
+              <span class="rm-card-badge" style="--card-accent: #f59e0b;">☁️ Cloud Architecture · 4 Milestones · 16 Topics</span>
+              <h3 class="rm-card-title">AWS Cloud Solutions Architect</h3>
+              <p class="rm-card-desc">
+                Production multi-account AWS Organizations, private multi-tier VPC subnets, auto-scaling EC2 clusters with Application Load Balancers, Multi-AZ Aurora RDS, and CloudFront edge CDN.
+              </p>
+              <div class="rm-card-topics-list">
+                <span class="rm-card-topic-tag">AWS IAM &amp; SCP</span>
+                <span class="rm-card-topic-tag">Multi-AZ VPC</span>
+                <span class="rm-card-topic-tag">ALB &amp; Auto Scaling</span>
+                <span class="rm-card-topic-tag">Aurora RDS Multi-AZ</span>
+                <span class="rm-card-topic-tag">CloudFront Edge</span>
+              </div>
+            </div>
+            <div class="rm-card-footer" style="--card-accent: #f59e0b;">
+              <span>Launch Cloud Flowchart</span>
+              <span>➔</span>
+            </div>
+          </a>
+
+          <!-- Card 3: DevOps & SRE -->
+          <a href="roadmap.html?id=devops" class="roadmap-card-preview" style="--card-accent: #10b981;">
+            <div>
+              <span class="rm-card-badge" style="--card-accent: #10b981;">🚀 SRE &amp; Platform · 6 Milestones · 21 Topics</span>
+              <h3 class="rm-card-title">DevOps &amp; Site Reliability Engineering</h3>
+              <p class="rm-card-desc">
+                Complete engineering pipeline: Linux systems, multi-stage Docker builds, modular Terraform IaC on AWS, Kubernetes production clusters, GitOps ArgoCD pipelines, and Prometheus SRE alerting.
+              </p>
+              <div class="rm-card-topics-list">
+                <span class="rm-card-topic-tag">Linux &amp; Bash</span>
+                <span class="rm-card-topic-tag">Docker Multi-Stage</span>
+                <span class="rm-card-topic-tag">Terraform Modules</span>
+                <span class="rm-card-topic-tag">Kubernetes K8s</span>
+                <span class="rm-card-topic-tag">GitOps ArgoCD</span>
+                <span class="rm-card-topic-tag">Prometheus / Grafana</span>
+              </div>
+            </div>
+            <div class="rm-card-footer" style="--card-accent: #10b981;">
+              <span>Launch DevOps Flowchart</span>
+              <span>➔</span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -190,6 +286,7 @@
           <ul class="footer-links">
             <li><a href="index.html" class="footer-link">Home</a></li>
             <li><a href="#blog" class="footer-link">All Articles</a></li>
+            <li><a href="roadmap.html" class="footer-link">🗺️ Interactive Roadmaps</a></li>
             <li><a href="about.html" class="footer-link">About Aajera</a></li>
           </ul>
         </div>
