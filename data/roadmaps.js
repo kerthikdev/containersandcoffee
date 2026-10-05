@@ -313,6 +313,12 @@ window.ROADMAP_DATA = {
             command: "aws rds describe-db-instances"
           },
           {
+            name: "Redis & In-Memory Caching (ElastiCache)",
+            type: "core",
+            desc: "Sub-millisecond query caching using Redis Cluster and AWS ElastiCache. Key eviction policies (LRU/LFU), replication groups, automated failover with Sentinel, and Redis persistence (RDB/AOF).",
+            command: "redis-cli -h cluster.cache.amazonaws.com -p 6379 ping"
+          },
+          {
             name: "CloudFront Global CDN & WAF",
             type: "core",
             desc: "Global edge points of presence (PoPs), SSL termination at the edge, origin shield caching, and AWS WAF rules mitigating SQL injection and DDoS.",
