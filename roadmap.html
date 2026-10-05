@@ -102,10 +102,13 @@
               <button class="rm-btn-ghost" id="reset-progress-btn" title="Reset your saved progress for this roadmap">
                 ↺ Reset
               </button>
+              <button class="rm-btn-ghost" id="share-roadmap-btn" title="Copy shareable link to this roadmap">
+                🔗 Share
+              </button>
             </div>
           </div>
 
-          <!-- Search & Filter Bar -->
+          <!-- Search, View Switcher & Filter Bar -->
           <div class="rm-toolbar-filter-row">
             <div class="rm-search-box">
               <span class="search-icon">🔍</span>
@@ -113,15 +116,33 @@
                 type="text"
                 id="roadmap-search"
                 class="rm-search-input"
-                placeholder="Filter topics (e.g., OSPF, VPC, Docker, Terraform)..."
+                placeholder="Filter topics (e.g., OSPF, VPC, S3, Docker, Subnetting)..."
                 aria-label="Filter roadmap skills"
               />
             </div>
+            
+            <div class="rm-view-toggle" role="group" aria-label="Roadmap View Mode">
+              <button class="rm-view-btn active" id="view-tree-btn" title="Visual Flowchart View">
+                📊 Flowchart
+              </button>
+              <button class="rm-view-btn" id="view-checklist-btn" title="Interactive Checklist View">
+                📋 Checklist
+              </button>
+            </div>
+
             <div class="rm-filter-pills-wrap">
               <button class="rm-filter-pill active" data-filter="all">All Topics</button>
               <button class="rm-filter-pill" data-filter="core">★ Core Only</button>
               <button class="rm-filter-pill" data-filter="recommended">⚡ Recommended</button>
+              <button class="rm-filter-pill" data-filter="done">✓ Completed</button>
             </div>
+          </div>
+
+          <!-- roadmap.sh Visual Legend -->
+          <div class="rm-legend-bar">
+            <span class="legend-item"><span class="legend-box core">★</span> Core Required Knowledge</span>
+            <span class="legend-item"><span class="legend-box recommended">⚡</span> Recommended Standard</span>
+            <span class="legend-item"><span class="legend-box done">✓</span> Click Node to View Details &amp; Complete</span>
           </div>
         </div>
 
@@ -150,6 +171,10 @@
           <div class="rm-flow-tree" id="roadmap-flow-tree">
             <!-- Dynamically populated by scripts/roadmap.js -->
           </div>
+          <!-- Checklist View Container (hidden by default) -->
+          <div class="rm-checklist-view" id="roadmap-checklist-tree" style="display: none;">
+            <!-- Dynamically populated by scripts/roadmap.js -->
+          </div>
         </div>
 
         <!-- COMMUNITY / PORTFOLIO CALLOUT -->
@@ -171,7 +196,7 @@
 
   </main>
 
-  <!-- TOPIC DETAIL MODAL -->
+  <!-- TOPIC DETAIL MODAL (roadmap.sh style drawer/modal) -->
   <div class="rm-modal-backdrop" id="topic-modal" role="dialog" aria-modal="true" aria-labelledby="modal-topic-title">
     <div class="rm-modal-card">
       <button class="rm-modal-close" id="modal-close-btn" aria-label="Close dialog">✕</button>
@@ -187,10 +212,17 @@
 
         <div class="modal-command-box" id="modal-command-wrap">
           <div class="modal-command-header">
-            <span>Essential Command / Syntax:</span>
+            <span>Essential Terminal / CLI Syntax:</span>
             <button class="btn-copy-cmd" id="modal-copy-cmd-btn">Copy</button>
           </div>
           <pre><code id="modal-command-code">command here</code></pre>
+        </div>
+
+        <div class="modal-doc-box" id="modal-doc-wrap" style="margin-top: 1rem; display: none;">
+          <a href="#" id="modal-doc-link" target="_blank" rel="noopener" class="rm-doc-btn">
+            <span>📖 Official Documentation &amp; Reference</span>
+            <span>↗</span>
+          </a>
         </div>
       </div>
 

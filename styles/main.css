@@ -1809,6 +1809,202 @@ pre {
   color: #120b06;
 }
 
+/* View Toggle (Flowchart vs Checklist) */
+.rm-view-toggle {
+  display: inline-flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  gap: 2px;
+}
+
+.rm-view-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rm-view-btn.active {
+  background: var(--accent);
+  color: #120b06;
+}
+
+/* Legend Bar (roadmap.sh style) */
+.rm-legend-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legend-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.legend-box.core {
+  background: rgba(212, 139, 72, 0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.legend-box.recommended {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.legend-box.done {
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid #34d399;
+  color: #34d399;
+}
+
+/* Checklist View (roadmap.sh list mode) */
+.rm-checklist-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rm-check-phase-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+}
+
+.rm-check-phase-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.75rem;
+}
+
+.rm-check-phase-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.rm-check-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.rm-checklist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.rm-checklist-row:hover {
+  border-color: var(--accent);
+  transform: translateX(3px);
+}
+
+.rm-checklist-row.completed {
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(52, 211, 153, 0.05);
+}
+
+.rm-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.rm-check-input {
+  width: 18px;
+  height: 18px;
+  accent-color: #34d399;
+  cursor: pointer;
+}
+
+.rm-doc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.rm-doc-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(212, 139, 72, 0.08);
+}
+
+/* Toast */
+.rm-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #1e140d;
+  color: #fff;
+  border: 1px solid var(--accent);
+  padding: 0.75rem 1.4rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  font-size: 0.88rem;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+}
+
+.rm-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Metadata Card */
 .rm-metadata-card {
   background: var(--bg-surface);

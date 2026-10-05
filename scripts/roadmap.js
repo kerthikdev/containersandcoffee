@@ -1,11 +1,13 @@
 /* =====================================================
    CONTAINERS & COFFEE — Interactive Roadmaps Engine (roadmap.js)
-   Inspired by roadmap.sh: Flowchart tree, interactive progress, topic modals
+   Inspired by roadmap.sh: Flowchart tree, interactive progress, topic modals,
+   checklist mode, and live filtering.
    ===================================================== */
 
 let currentRoadmapId = 'ccna';
-let activeFilter = 'all'; // all, core, recommended
-let userProgress = {}; // { [topicId]: true }
+let activeFilter = 'all'; // all, core, recommended, done
+let currentViewMode = 'tree'; // 'tree' | 'checklist'
+let userProgress = {}; // { [topicKey]: true }
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
@@ -25,10 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initRoadmapTabs();
+  initViewToggle();
   initSearch();
   initFilterPills();
   initProgressActions();
   initTopicModal();
+  initShareAction();
   renderRoadmap(currentRoadmapId);
 });
 
@@ -92,6 +96,8 @@ function toggleTopicProgress(topicKey) {
 
 function updateTopicElements(topicKey) {
   const isDone = !!userProgress[topicKey];
+  
+  // Update Flowchart Tree Chips
   const pills = document.querySelectorAll(`[data-topic-key="${topicKey}"]`);
   pills.forEach(el => {
     el.classList.toggle('completed', isDone);
@@ -99,6 +105,14 @@ function updateTopicElements(topicKey) {
     if (checkIcon) {
       checkIcon.innerHTML = isDone ? '✓' : '';
     }
+  });
+
+  // Update Checklist Rows
+  const checkRows = document.querySelectorAll(`.rm-checklist-row[data-topic-key="${topicKey}"]`);
+  checkRows.forEach(row => {
+    row.classList.toggle('completed', isDone);
+    const cb = row.querySelector('.rm-check-input');
+    if (cb) cb.checked = isDone;
   });
 }
 
@@ -122,6 +136,35 @@ function initRoadmapTabs() {
       renderRoadmap(currentRoadmapId);
     });
   });
+}
+
+/* ─── View Toggle (Flowchart vs Checklist) ─── */
+function initViewToggle() {
+  const treeBtn = document.getElementById('view-tree-btn');
+  const checkBtn = document.getElementById('view-checklist-btn');
+  const treeContainer = document.getElementById('roadmap-flow-tree');
+  const checkContainer = document.getElementById('roadmap-checklist-tree');
+
+  if (treeBtn && checkBtn) {
+    treeBtn.addEventListener('click', () => {
+      currentViewMode = 'tree';
+      treeBtn.classList.add('active');
+      checkBtn.classList.remove('active');
+      if (treeContainer) treeContainer.style.display = 'flex';
+      if (checkContainer) checkContainer.style.display = 'none';
+    });
+
+    checkBtn.addEventListener('click', () => {
+      currentViewMode = 'checklist';
+      checkBtn.classList.add('active');
+      treeBtn.classList.remove('active');
+      if (treeContainer) treeContainer.style.display = 'none';
+      if (checkContainer) {
+        checkContainer.style.display = 'flex';
+        renderChecklistView();
+      }
+    });
+  }
 }
 
 /* ─── Search and Filters ─── */
@@ -151,17 +194,23 @@ function initFilterPills() {
 }
 
 function filterRoadmapDisplay(query, filterType) {
-  const cards = document.querySelectorAll('.rm-phase-node');
-  cards.forEach(card => {
+  // Filter Tree View
+  const phaseCards = document.querySelectorAll('.rm-phase-node');
+  phaseCards.forEach(card => {
     let matchCount = 0;
     const topicNodes = card.querySelectorAll('.rm-topic-chip');
 
     topicNodes.forEach(node => {
       const name = (node.getAttribute('data-name') || '').toLowerCase();
       const type = node.getAttribute('data-type') || '';
+      const topicKey = node.getAttribute('data-topic-key') || '';
+      const isDone = !!userProgress[topicKey];
 
       const matchesQuery = !query || name.includes(query);
-      const matchesType = filterType === 'all' || type === filterType;
+      let matchesType = true;
+      if (filterType === 'core') matchesType = (type === 'core');
+      else if (filterType === 'recommended') matchesType = (type === 'recommended');
+      else if (filterType === 'done') matchesType = isDone;
 
       if (matchesQuery && matchesType) {
         node.style.display = 'inline-flex';
@@ -171,7 +220,40 @@ function filterRoadmapDisplay(query, filterType) {
       }
     });
 
-    if (query) {
+    if (query || filterType !== 'all') {
+      card.style.display = matchCount > 0 ? 'grid' : 'none';
+    } else {
+      card.style.display = 'grid';
+    }
+  });
+
+  // Filter Checklist View
+  const checkCards = document.querySelectorAll('.rm-check-phase-card');
+  checkCards.forEach(card => {
+    let matchCount = 0;
+    const rows = card.querySelectorAll('.rm-checklist-row');
+
+    rows.forEach(row => {
+      const name = (row.getAttribute('data-name') || '').toLowerCase();
+      const type = row.getAttribute('data-type') || '';
+      const topicKey = row.getAttribute('data-topic-key') || '';
+      const isDone = !!userProgress[topicKey];
+
+      const matchesQuery = !query || name.includes(query);
+      let matchesType = true;
+      if (filterType === 'core') matchesType = (type === 'core');
+      else if (filterType === 'recommended') matchesType = (type === 'recommended');
+      else if (filterType === 'done') matchesType = isDone;
+
+      if (matchesQuery && matchesType) {
+        row.style.display = 'flex';
+        matchCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    if (query || filterType !== 'all') {
       card.style.display = matchCount > 0 ? 'block' : 'none';
     } else {
       card.style.display = 'block';
@@ -179,7 +261,7 @@ function filterRoadmapDisplay(query, filterType) {
   });
 }
 
-/* ─── Render Roadmap ─── */
+/* ─── Render Roadmap Flow Tree ─── */
 function renderRoadmap(roadmapId) {
   const data = ROADMAP_DATA[roadmapId];
   if (!data) return;
@@ -234,7 +316,7 @@ function renderRoadmap(roadmapId) {
           <!-- Topics / Skills Grid (roadmap.sh style) -->
           <div class="rm-topics-grid">
             ${phase.topics.map(topic => {
-              const topicKey = `${roadmapId}_${topic.name.toLowerCase().replace(/\s+/g, '_')}`;
+              const topicKey = `${roadmapId}_${topic.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
               const isDone = !!userProgress[topicKey];
 
               return `
@@ -246,6 +328,7 @@ function renderRoadmap(roadmapId) {
                   data-type="${topic.type}"
                   data-desc="${encodeURIComponent(topic.desc)}"
                   data-command="${encodeURIComponent(topic.command || '')}"
+                  data-doc="${encodeURIComponent(topic.docUrl || '')}"
                   data-phase="${phase.number}. ${phase.title}"
                   onclick="openTopicModal(this)"
                   title="${topic.name} (${topic.type === 'core' ? 'Core Knowledge' : 'Recommended Tool'})"
@@ -271,8 +354,105 @@ function renderRoadmap(roadmapId) {
     `;
   }).join('');
 
+  if (currentViewMode === 'checklist') {
+    renderChecklistView();
+  }
+
   updateProgressBar();
 }
+
+/* ─── Render Checklist View (roadmap.sh checklist mode) ─── */
+function renderChecklistView() {
+  const checkContainer = document.getElementById('roadmap-checklist-tree');
+  if (!checkContainer) return;
+
+  const data = ROADMAP_DATA[currentRoadmapId];
+  if (!data) return;
+
+  checkContainer.innerHTML = data.phases.map(phase => {
+    return `
+      <div class="rm-check-phase-card">
+        <div class="rm-check-phase-header">
+          <h3 class="rm-check-phase-title">${phase.number}. ${phase.title}</h3>
+          <span class="rm-phase-tag">${phase.topics.length} Topics</span>
+        </div>
+        <div class="rm-check-items-list">
+          ${phase.topics.map(topic => {
+            const topicKey = `${currentRoadmapId}_${topic.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
+            const isDone = !!userProgress[topicKey];
+
+            return `
+              <div
+                class="rm-checklist-row ${isDone ? 'completed' : ''}"
+                data-topic-key="${topicKey}"
+                data-name="${topic.name}"
+                data-type="${topic.type}"
+                onclick="handleChecklistRowClick(event, '${topicKey}', this)"
+              >
+                <label class="rm-check-label">
+                  <input
+                    type="checkbox"
+                    class="rm-check-input"
+                    ${isDone ? 'checked' : ''}
+                    onchange="handleCheckboxChange(event, '${topicKey}')"
+                  />
+                  <span>${topic.name}</span>
+                  ${topic.type === 'core' ? '<span class="core-dot" title="Core Required">★ Core</span>' : ''}
+                </label>
+                <button
+                  type="button"
+                  class="btn-ghost-sm"
+                  onclick="event.stopPropagation(); triggerModalFromChecklist('${currentRoadmapId}', '${topic.name}')"
+                  style="font-size:0.75rem; padding: 0.25rem 0.6rem;"
+                >
+                  View Details ↗
+                </button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.handleChecklistRowClick = function(e, topicKey, rowEl) {
+  if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'button') {
+    return;
+  }
+  toggleTopicProgress(topicKey);
+};
+
+window.handleCheckboxChange = function(e, topicKey) {
+  e.stopPropagation();
+  toggleTopicProgress(topicKey);
+};
+
+window.triggerModalFromChecklist = function(roadmapId, topicName) {
+  const data = ROADMAP_DATA[roadmapId];
+  if (!data) return;
+
+  for (const phase of data.phases) {
+    const topic = phase.topics.find(t => t.name === topicName);
+    if (topic) {
+      const topicKey = `${roadmapId}_${topic.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
+      const fakeBtn = {
+        getAttribute: (attr) => {
+          if (attr === 'data-topic-key') return topicKey;
+          if (attr === 'data-name') return topic.name;
+          if (attr === 'data-type') return topic.type;
+          if (attr === 'data-desc') return encodeURIComponent(topic.desc);
+          if (attr === 'data-command') return encodeURIComponent(topic.command || '');
+          if (attr === 'data-doc') return encodeURIComponent(topic.docUrl || '');
+          if (attr === 'data-phase') return `${phase.number}. ${phase.title}`;
+          return null;
+        }
+      };
+      openTopicModal(fakeBtn);
+      return;
+    }
+  }
+};
 
 /* ─── Progress Bar ─── */
 function updateProgressBar() {
@@ -285,7 +465,7 @@ function updateProgressBar() {
   data.phases.forEach(p => {
     p.topics.forEach(t => {
       totalTopics++;
-      const topicKey = `${currentRoadmapId}_${t.name.toLowerCase().replace(/\s+/g, '_')}`;
+      const topicKey = `${currentRoadmapId}_${t.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
       if (userProgress[topicKey]) {
         completedTopics++;
       }
@@ -300,24 +480,25 @@ function updateProgressBar() {
 
   if (barFill) barFill.style.width = `${percent}%`;
   if (textEl) textEl.textContent = `${percent}% Completed`;
-  if (countEl) countEl.textContent = `${completedTopics} / ${totalTopics} Topics`;
+  if (countEl) countEl.textContent = `${completedTopics} / ${totalTopics} Topics Done`;
 }
 
 function initProgressActions() {
   const resetBtn = document.getElementById('reset-progress-btn');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to reset your progress for this roadmap?')) {
+      if (confirm('Are you sure you want to reset your saved progress for this roadmap?')) {
         const data = ROADMAP_DATA[currentRoadmapId];
         if (data) {
           data.phases.forEach(p => {
             p.topics.forEach(t => {
-              const topicKey = `${currentRoadmapId}_${t.name.toLowerCase().replace(/\s+/g, '_')}`;
+              const topicKey = `${currentRoadmapId}_${t.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
               delete userProgress[topicKey];
             });
           });
           saveProgress();
           renderRoadmap(currentRoadmapId);
+          showToast('Progress has been reset');
         }
       }
     });
@@ -330,15 +511,49 @@ function initProgressActions() {
       if (data) {
         data.phases.forEach(p => {
           p.topics.forEach(t => {
-            const topicKey = `${currentRoadmapId}_${t.name.toLowerCase().replace(/\s+/g, '_')}`;
+            const topicKey = `${currentRoadmapId}_${t.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
             userProgress[topicKey] = true;
           });
         });
         saveProgress();
         renderRoadmap(currentRoadmapId);
+        showToast('All topics marked as completed! 🎉');
       }
     });
   }
+}
+
+/* ─── Share Roadmap Link ─── */
+function initShareAction() {
+  const shareBtn = document.getElementById('share-roadmap-btn');
+  if (!shareBtn) return;
+
+  shareBtn.addEventListener('click', () => {
+    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${currentRoadmapId}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast('Roadmap link copied to clipboard! 📋');
+      }).catch(() => {
+        prompt('Copy this roadmap link:', shareUrl);
+      });
+    } else {
+      prompt('Copy this roadmap link:', shareUrl);
+    }
+  });
+}
+
+function showToast(message) {
+  let toast = document.querySelector('.rm-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'rm-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
 }
 
 /* ─── Topic Modal ─── */
@@ -400,6 +615,7 @@ window.openTopicModal = function(btn) {
   const type = btn.getAttribute('data-type');
   const desc = decodeURIComponent(btn.getAttribute('data-desc') || '');
   const command = decodeURIComponent(btn.getAttribute('data-command') || '');
+  const docUrl = decodeURIComponent(btn.getAttribute('data-doc') || '');
   const phase = btn.getAttribute('data-phase');
 
   const titleEl = document.getElementById('modal-topic-title');
@@ -408,6 +624,8 @@ window.openTopicModal = function(btn) {
   const descEl = document.getElementById('modal-topic-desc');
   const cmdWrap = document.getElementById('modal-command-wrap');
   const cmdCode = document.getElementById('modal-command-code');
+  const docWrap = document.getElementById('modal-doc-wrap');
+  const docLink = document.getElementById('modal-doc-link');
   const toggleBtn = document.getElementById('modal-toggle-status-btn');
 
   if (titleEl) titleEl.textContent = name;
@@ -424,6 +642,15 @@ window.openTopicModal = function(btn) {
       cmdCode.textContent = command;
     } else {
       cmdWrap.style.display = 'none';
+    }
+  }
+
+  if (docWrap && docLink) {
+    if (docUrl) {
+      docWrap.style.display = 'block';
+      docLink.href = docUrl;
+    } else {
+      docWrap.style.display = 'none';
     }
   }
 
