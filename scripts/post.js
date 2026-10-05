@@ -1,11 +1,12 @@
 /* =====================================================
    CONTAINERS & COFFEE — Post Renderer (post.js)
-   Reads ?id= param, finds post in BLOG_DATA, renders it
+   Renders Article, Reading Progress, Copy Code, Author Box
    ===================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initThemeToggle();
+  initReadingProgressBar();
 
   if (typeof BLOG_DATA === 'undefined') {
     renderError('Blog data not found.');
@@ -31,7 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.title = `${post.title} — Containers & Coffee`;
 });
 
-/* ─── Navbar ─── */
+/* ─── Reading Progress Bar ─── */
+function initReadingProgressBar() {
+  const bar = document.getElementById('reading-progress-bar');
+  if (!bar) return;
+
+  window.addEventListener('scroll', () => {
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+    bar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+  }, { passive: true });
+}
+
+/* ─── Navbar scroll ─── */
 function initNavbar() {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
@@ -65,46 +78,58 @@ function renderPost(post) {
   const dateStr = formatDate(post.date);
   const catClass = getCategoryClass(post.category);
 
-  // Hero
+  // Hero Section
   const heroEl = document.getElementById('post-hero');
   if (heroEl) {
     heroEl.innerHTML = `
       <div class="post-hero-bg" style="background: ${post.coverGradient};"></div>
       <div class="post-hero-overlay"></div>
       <div class="container post-hero-inner">
-        <div class="post-hero-category">
+        <div>
           <span class="post-category-pill ${catClass}">${post.category}</span>
         </div>
         <h1 class="post-hero-title">${post.title}</h1>
         <div class="post-hero-meta">
-          <div class="post-author post-hero-author">
+          <div class="post-author">
             <div class="author-avatar">${post.authorInitials}</div>
             <span class="author-name">${post.author}</span>
           </div>
           <span class="post-dot">·</span>
-          <span class="post-date">${dateStr}</span>
+          <span class="post-date">📅 ${dateStr}</span>
           <span class="post-dot">·</span>
-          <span class="post-read-time">${post.readTime} min read</span>
+          <span class="post-read-time">⏳ ${post.readTime} min read</span>
         </div>
       </div>
     `;
   }
 
-  // Article body
+  // Article Body
   const articleEl = document.getElementById('post-article');
   if (articleEl) {
-    // Process code blocks to add terminal-style header
     const processedContent = processCodeBlocks(post.content.trim());
+    const tagsHtml = post.tags.map(t => `<span class="post-tag">#${t}</span>`).join('');
 
-    const tagsHtml = post.tags.map(t =>
-      `<span class="post-tag">${t}</span>`
-    ).join('');
+    const authorBio = (BLOG_DATA.site && BLOG_DATA.site.authorBio) 
+      ? BLOG_DATA.site.authorBio 
+      : "DevOps engineer, cloud architect, and coffee enthusiast. Writing about containers, Kubernetes, and reliable infrastructure.";
 
     articleEl.innerHTML = `
-      <a href="index.html" class="back-link">← Back to Blog</a>
+      <a href="index.html" class="back-link">← Back to all brews</a>
       <div class="article-content">${processedContent}</div>
       <div class="post-tags">${tagsHtml}</div>
+      
+      <!-- Author Box -->
+      <div class="post-author-box">
+        <div class="post-author-avatar-large">${post.authorInitials}</div>
+        <div class="post-author-details">
+          <h3>Written by ${post.author}</h3>
+          <p>${authorBio}</p>
+        </div>
+      </div>
     `;
+
+    // Attach copy button handlers
+    attachCopyListeners();
   }
 
   // Related posts
@@ -116,8 +141,11 @@ function renderPost(post) {
 
     if (related.length > 0) {
       relatedEl.innerHTML = `
-        <h2 class="section-title" style="margin-bottom: var(--sp-8);">More Brews</h2>
-        <div class="blog-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+        <div style="margin-bottom: var(--sp-6);">
+          <p class="section-label">Keep Exploring</p>
+          <h2 class="section-title">Related Brews</h2>
+        </div>
+        <div class="blog-grid">
           ${related.map(p => createRelatedCard(p)).join('')}
         </div>
       `;
@@ -131,28 +159,28 @@ function createRelatedCard(post) {
   const dateStr = formatDate(post.date);
   const catClass = getCategoryClass(post.category);
   return `
-    <article class="post-card" onclick="window.location.href='post.html?id=${post.id}'" role="article">
+    <article class="post-card" onclick="window.location.href='post.html?id=${post.id}'" role="article" tabindex="0">
       <div class="post-card-cover" style="background: ${post.coverGradient};">
-        <span style="position:relative;z-index:1;">${post.coverIcon}</span>
+        <span style="position:relative; z-index:1;">${post.coverIcon}</span>
       </div>
       <div class="post-card-body">
         <span class="post-category-pill ${catClass}">${post.category}</span>
         <h3 class="post-card-title">${post.title}</h3>
+        <p class="post-card-excerpt">${post.excerpt}</p>
         <div class="post-card-footer">
           <div class="post-author">
             <div class="author-avatar">${post.authorInitials}</div>
-            <span style="font-size:0.82rem; color:var(--text-muted);">${dateStr} · ${post.readTime}m</span>
+            <span style="font-size:0.85rem; color:var(--text-secondary);">${dateStr} · ${post.readTime}m</span>
           </div>
-          <div class="read-more-arrow">→</div>
+          <div class="read-more-arrow" aria-hidden="true">→</div>
         </div>
       </div>
     </article>
   `;
 }
 
-/* ─── Process code blocks with terminal header ─── */
+/* ─── Code Block Processing & Copy functionality ─── */
 function processCodeBlocks(html) {
-  // Wrap <pre><code class="language-X"> with a terminal-style header
   return html.replace(
     /<pre><code class="language-([^"]+)">([\s\S]*?)<\/code><\/pre>/g,
     (_, lang, code) => {
@@ -165,13 +193,41 @@ function processCodeBlocks(html) {
               <div class="pre-dot pre-dot-yellow"></div>
               <div class="pre-dot pre-dot-green"></div>
             </div>
-            <span class="pre-lang">${langLabel}</span>
+            <div class="pre-actions">
+              <span class="pre-lang">${langLabel}</span>
+              <button class="copy-code-btn" type="button" aria-label="Copy code to clipboard">Copy</button>
+            </div>
           </div>
-          <pre style="margin-top:0; border-top-left-radius:0; border-top-right-radius:0;"><code>${code}</code></pre>
+          <pre><code>${code}</code></pre>
         </div>
       `;
     }
   );
+}
+
+function attachCopyListeners() {
+  document.querySelectorAll('.code-block-wrapper').forEach(wrapper => {
+    const btn = wrapper.querySelector('.copy-code-btn');
+    const code = wrapper.querySelector('pre code');
+    if (!btn || !code) return;
+
+    btn.addEventListener('click', async () => {
+      try {
+        // Decode HTML entities
+        const textToCopy = code.innerText || code.textContent;
+        await navigator.clipboard.writeText(textToCopy);
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied! ✓';
+        btn.style.color = '#34d399';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.color = '';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    });
+  });
 }
 
 /* ─── Error rendering ─── */
@@ -180,10 +236,10 @@ function renderError(message) {
   if (articleEl) {
     articleEl.innerHTML = `
       <div style="text-align:center; padding: var(--sp-20) 0;">
-        <div style="font-size:3rem; margin-bottom:var(--sp-4);">☕</div>
-        <h2 style="margin-bottom:var(--sp-4);">Oops, this brew isn't ready.</h2>
-        <p style="color:var(--text-muted); margin-bottom:var(--sp-8);">${message}</p>
-        <a href="index.html" class="btn-primary">Go Home</a>
+        <div style="font-size:3.5rem; margin-bottom:var(--sp-4);">☕</div>
+        <h2 style="font-family:var(--font-heading); font-size:2rem; margin-bottom:var(--sp-4);">Oops, this brew isn't ready.</h2>
+        <p style="color:var(--text-secondary); margin-bottom:var(--sp-8);">${message}</p>
+        <a href="index.html" class="btn-primary">Return to Cafe</a>
       </div>
     `;
   }
@@ -192,15 +248,16 @@ function renderError(message) {
 /* ─── Utilities ─── */
 function formatDate(dateStr) {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function getCategoryClass(category) {
   const map = {
     'Docker': 'cat-docker',
-    'Kubernetes': 'cat-kubernetes',
+    'Kubernetes': 'cat-k8s',
     'DevOps': 'cat-devops',
-    'Coffee Life': 'cat-coffee-life',
+    'Networking': 'cat-networking',
+    'Coffee Life': 'cat-coffee'
   };
-  return map[category] || 'cat-default';
+  return map[category] || 'cat-docker';
 }

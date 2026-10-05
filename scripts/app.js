@@ -1,7 +1,10 @@
 /* =====================================================
-   CONTAINERS & COFFEE — Blog Engine (app.js)
-   Reads BLOG_DATA global, renders homepage components
+   CONTAINERS & COFFEE — Dynamic Engine (app.js)
+   Renders Homepage, Live Search, Category Filters, Newsletter
    ===================================================== */
+
+let activeCategory = 'All';
+let searchQuery = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
@@ -10,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
 
   if (typeof BLOG_DATA === 'undefined') {
-    console.error('BLOG_DATA not found. Make sure data/posts.js is loaded.');
+    console.error('BLOG_DATA not found. Please ensure data/posts.js is loaded.');
     return;
   }
 
@@ -18,10 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHeroFeatured(posts);
   renderCategoryFilters(posts);
   renderBlogGrid(posts);
+  initSearchInput(posts);
   initNewsletterForm();
 });
 
-/* ─── Navbar scroll effect ─── */
+/* ─── Navbar scroll ─── */
 function initNavbar() {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
@@ -55,22 +59,22 @@ function applyTheme(theme) {
   if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
-/* ─── Floating Particles ─── */
+/* ─── Floating Particles in Hero ─── */
 function initParticles() {
-  const container = document.querySelector('.hero-particles');
+  const container = document.getElementById('hero-particles');
   if (!container) return;
 
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 20; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
-    const size = Math.random() * 4 + 2;
+    const size = Math.random() * 5 + 2;
     p.style.cssText = `
       width: ${size}px;
       height: ${size}px;
       left: ${Math.random() * 100}%;
       top: ${Math.random() * 100}%;
-      --duration: ${Math.random() * 8 + 5}s;
-      --delay: ${Math.random() * 6}s;
+      --duration: ${Math.random() * 7 + 5}s;
+      --delay: ${Math.random() * 5}s;
     `;
     container.appendChild(p);
   }
@@ -85,14 +89,14 @@ function renderHeroFeatured(posts) {
   const dateStr = formatDate(featured.date);
 
   container.innerHTML = `
-    <a href="post.html?id=${featured.id}" class="featured-strip" aria-label="Read featured post: ${featured.title}">
+    <div class="featured-strip" onclick="window.location.href='post.html?id=${featured.id}'" role="link" tabindex="0" aria-label="Read featured post: ${featured.title}">
       <div class="featured-cover">
         <div class="featured-cover-bg" style="background: ${featured.coverGradient};">
           <span>${featured.coverIcon}</span>
         </div>
       </div>
       <div class="featured-meta">
-        <span class="featured-label">Featured Post</span>
+        <span class="featured-label">✨ Featured Brew · ${featured.category}</span>
         <h2 class="featured-title">${featured.title}</h2>
         <p class="featured-excerpt">${featured.excerpt}</p>
         <div class="featured-info">
@@ -103,35 +107,38 @@ function renderHeroFeatured(posts) {
           <span class="post-dot">·</span>
           <span class="post-date">${dateStr}</span>
           <span class="post-dot">·</span>
-          <span class="post-read-time">${featured.readTime} min read</span>
+          <span class="post-read-time">⏳ ${featured.readTime} min read</span>
         </div>
-        <div style="margin-top: 0.5rem;">
-          <span class="btn-primary" style="display:inline-flex;">Read the Brew &nbsp;→</span>
+        <div style="margin-top: var(--sp-4);">
+          <span class="btn-primary" style="display:inline-flex; font-size:0.88rem; padding: 0.55rem 1.25rem;">
+            Read Full Post &nbsp;→
+          </span>
         </div>
       </div>
-    </a>
+    </div>
   `;
 }
 
 /* ─── Category Filters ─── */
-let activeCategory = 'All';
-
 function renderCategoryFilters(posts) {
   const container = document.getElementById('category-filters');
   if (!container) return;
 
   const categories = ['All', ...new Set(posts.map(p => p.category))];
 
-  container.innerHTML = categories.map(cat => `
-    <button
-      class="filter-btn ${cat === activeCategory ? 'active' : ''}"
-      data-category="${cat}"
-      id="filter-${cat.toLowerCase().replace(/\s+/g, '-')}"
-      aria-pressed="${cat === activeCategory}"
-    >
-      ${cat}
-    </button>
-  `).join('');
+  container.innerHTML = categories.map(cat => {
+    const count = cat === 'All' ? posts.length : posts.filter(p => p.category === cat).length;
+    return `
+      <button
+        class="filter-btn ${cat === activeCategory ? 'active' : ''}"
+        data-category="${cat}"
+        id="filter-${cat.toLowerCase().replace(/\s+/g, '-')}"
+        aria-pressed="${cat === activeCategory}"
+      >
+        ${cat} (${count})
+      </button>
+    `;
+  }).join('');
 
   container.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -145,21 +152,45 @@ function renderCategoryFilters(posts) {
   });
 }
 
-/* ─── Blog Grid ─── */
+/* ─── Live Search Input ─── */
+function initSearchInput(posts) {
+  const searchInput = document.getElementById('search-input');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    renderBlogGrid(posts);
+  });
+}
+
+/* ─── Blog Grid Rendering ─── */
 function renderBlogGrid(posts) {
   const grid = document.getElementById('blog-grid');
   if (!grid) return;
 
-  // Filter out featured post from non-"All" views; show all in grid
-  const filtered = activeCategory === 'All'
-    ? posts.filter(p => !p.featured)
-    : posts.filter(p => p.category === activeCategory);
+  let filtered = posts;
+
+  // Category filter
+  if (activeCategory !== 'All') {
+    filtered = filtered.filter(p => p.category === activeCategory);
+  }
+
+  // Search filter
+  if (searchQuery) {
+    filtered = filtered.filter(p => 
+      p.title.toLowerCase().includes(searchQuery) ||
+      p.excerpt.toLowerCase().includes(searchQuery) ||
+      p.tags.some(t => t.toLowerCase().includes(searchQuery)) ||
+      p.category.toLowerCase().includes(searchQuery)
+    );
+  }
 
   if (filtered.length === 0) {
     grid.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">☕</div>
-        <p>No brews in this category yet. Check back soon!</p>
+        <h3 style="font-family:var(--font-heading); font-size:1.4rem; margin-bottom:var(--sp-2);">No matching brews found</h3>
+        <p>Try searching for Docker, Kubernetes, CI/CD, or clear the active filter.</p>
       </div>
     `;
     return;
@@ -167,15 +198,15 @@ function renderBlogGrid(posts) {
 
   grid.innerHTML = filtered.map(post => createPostCard(post)).join('');
 
-  // Animate cards in
+  // Staggered reveal
   grid.querySelectorAll('.post-card').forEach((card, i) => {
     card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
+    card.style.transform = 'translateY(16px)';
     setTimeout(() => {
-      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease, box-shadow 0.25s ease, border-color 0.25s ease';
+      card.style.transition = 'opacity 0.35s ease, transform 0.35s ease, box-shadow 0.25s ease, border-color 0.25s ease';
       card.style.opacity = '1';
       card.style.transform = 'translateY(0)';
-    }, i * 60);
+    }, i * 50);
   });
 }
 
@@ -184,9 +215,9 @@ function createPostCard(post) {
   const catClass = getCategoryClass(post.category);
 
   return `
-    <article class="post-card fade-in-up" onclick="window.location.href='post.html?id=${post.id}'" role="article" aria-label="${post.title}">
+    <article class="post-card" onclick="window.location.href='post.html?id=${post.id}'" role="article" tabindex="0" aria-label="${post.title}">
       <div class="post-card-cover" style="background: ${post.coverGradient};">
-        <span style="position:relative;z-index:1;">${post.coverIcon}</span>
+        <span style="position:relative; z-index:1;">${post.coverIcon}</span>
       </div>
       <div class="post-card-body">
         <span class="post-category-pill ${catClass}">${post.category}</span>
@@ -195,77 +226,84 @@ function createPostCard(post) {
         <div class="post-card-footer">
           <div class="post-author">
             <div class="author-avatar">${post.authorInitials}</div>
-            <span style="font-size:0.82rem; color:var(--text-muted);">${dateStr} · ${post.readTime}m</span>
+            <span style="font-size:0.85rem; color:var(--text-secondary);">${dateStr} · ${post.readTime}m</span>
           </div>
-          <div class="read-more-arrow">→</div>
+          <div class="read-more-arrow" aria-hidden="true">→</div>
         </div>
       </div>
     </article>
   `;
 }
 
-/* ─── Utility: Category CSS class ─── */
-function getCategoryClass(category) {
-  const map = {
-    'Docker': 'cat-docker',
-    'Kubernetes': 'cat-kubernetes',
-    'DevOps': 'cat-devops',
-    'Coffee Life': 'cat-coffee-life',
-  };
-  return map[category] || 'cat-default';
+/* ─── Newsletter Form ─── */
+function initNewsletterForm() {
+  const form = document.getElementById('newsletter-form');
+  const input = document.getElementById('newsletter-email');
+  const msg = document.getElementById('newsletter-msg');
+  if (!form || !input || !msg) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = input.value.trim();
+    if (!email) return;
+
+    msg.textContent = `☕ Thank you! You're dialed in. Check ${email} for fresh brews.`;
+    msg.style.display = 'block';
+    input.value = '';
+
+    setTimeout(() => {
+      msg.style.display = 'none';
+    }, 6000);
+  });
 }
 
-/* ─── Utility: Format Date ─── */
+/* ─── Quick Filter Helper for Footer ─── */
+window.setCategoryAndScroll = function(category) {
+  activeCategory = category;
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => {
+    const isTarget = btn.dataset.category === category;
+    btn.classList.toggle('active', isTarget);
+    btn.setAttribute('aria-pressed', isTarget ? 'true' : 'false');
+  });
+
+  if (typeof BLOG_DATA !== 'undefined') {
+    renderBlogGrid(BLOG_DATA.posts);
+  }
+
+  const blogSection = document.getElementById('blog');
+  if (blogSection) {
+    blogSection.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
+/* ─── Scroll Observer ─── */
+function initScrollAnimations() {
+  const obs = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    }),
+    { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
+  );
+  document.querySelectorAll('.fade-in-up').forEach(el => obs.observe(el));
+}
+
+/* ─── Helpers ─── */
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-/* ─── Newsletter form ─── */
-function initNewsletterForm() {
-  const form = document.getElementById('newsletter-form');
-  if (!form) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const input = form.querySelector('.newsletter-input');
-    const btn = form.querySelector('.btn-primary');
-    if (!input.value.includes('@')) {
-      input.style.borderColor = '#e05252';
-      setTimeout(() => input.style.borderColor = '', 1500);
-      return;
-    }
-    btn.textContent = '☕ You\'re in!';
-    btn.style.background = '#4ecfb5';
-    input.value = '';
-    setTimeout(() => {
-      btn.textContent = 'Subscribe';
-      btn.style.background = '';
-    }, 3000);
-  });
-}
-
-/* ─── Scroll Animations ─── */
-function initScrollAnimations() {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-  );
-
-  // Observe cards added later by using a MutationObserver
-  const gridObserver = new MutationObserver(() => {
-    document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => observer.observe(el));
-  });
-
-  const grid = document.getElementById('blog-grid');
-  if (grid) gridObserver.observe(grid, { childList: true });
-
-  document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+function getCategoryClass(category) {
+  const map = {
+    'Docker': 'cat-docker',
+    'Kubernetes': 'cat-k8s',
+    'DevOps': 'cat-devops',
+    'Networking': 'cat-networking',
+    'Coffee Life': 'cat-coffee'
+  };
+  return map[category] || 'cat-docker';
 }
