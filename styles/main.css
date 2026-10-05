@@ -2411,24 +2411,31 @@ pre {
 }
 
 .badge-emblem {
-  width: 68px;
-  height: 68px;
+  width: 72px;
+  height: 72px;
   border-radius: var(--r-md);
-  background: var(--badge-bg, rgba(239, 68, 68, 0.08));
-  border: 1px solid var(--badge-border, rgba(239, 68, 68, 0.2));
+  background: var(--badge-bg, rgba(232, 168, 88, 0.08));
+  border: 1px solid var(--badge-border, rgba(232, 168, 88, 0.25));
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 6px;
   overflow: hidden;
-  box-shadow: 0 4px 12px var(--badge-glow, rgba(239, 68, 68, 0.12));
+  box-shadow: 0 4px 16px var(--badge-glow, rgba(232, 168, 88, 0.15));
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
 }
 
-.badge-emblem img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+.badge-card:hover .badge-emblem {
+  transform: scale(1.06) rotate(1deg);
+  box-shadow: 0 8px 24px var(--badge-glow, rgba(232, 168, 88, 0.25));
+}
+
+.coffee-seal-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(10, 5, 3, 0.5));
 }
 
 .badge-pill-tag {
@@ -2438,10 +2445,33 @@ pre {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.25rem 0.65rem;
-  border-radius: var(--radius-full);
-  background: var(--badge-bg, rgba(239, 68, 68, 0.1));
-  color: var(--badge-color, #ef4444);
-  border: 1px solid var(--badge-border, rgba(239, 68, 68, 0.25));
+  border-radius: var(--r-full);
+  background: var(--badge-bg, rgba(232, 168, 88, 0.1));
+  color: var(--badge-color, var(--crema-gold));
+  border: 1px solid var(--badge-border, rgba(232, 168, 88, 0.25));
+}
+
+/* Atmospheric Coffee Lounge Credential Ribbon */
+.coffee-credentials-ribbon {
+  background: linear-gradient(135deg, rgba(33, 18, 10, 0.9) 0%, rgba(20, 11, 6, 0.95) 100%);
+  border: 1px solid var(--mocha-border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6) var(--sp-8);
+  margin-bottom: var(--sp-10);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.coffee-credentials-ribbon::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(232, 168, 88, 0.09) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .badge-title {
